@@ -26,7 +26,7 @@ void Game::Reset()
 		Box brick;
 		brick.width = 10;
 		brick.height = 2;
-		brick.x_position = 0;
+		brick.x_position = i * ((WINDOW_WIDTH - brick.width) / 4);
 		brick.y_position = 5;
 		brick.doubleThick = true;
 		brick.color = ConsoleColor::DarkGreen;
@@ -80,6 +80,26 @@ void Game::Render() const
 		brick.Draw();
 	}
 
+
+
+	
+	if (bricks.empty()) {
+		std::string message = "You win! Press 'R' to play again.";
+		Console::SetCursorPosition(
+			(WINDOW_WIDTH - static_cast<int>(message.length())) / 2,
+			WINDOW_HEIGHT / 2
+		);
+		std::cout << message;
+	}
+	else if (ball.y_position >= WINDOW_HEIGHT - 1) {
+		std::string message = "You Lose. Press 'R' to play again.";
+		Console::SetCursorPosition(
+			(WINDOW_WIDTH - static_cast<int>(message.length())) / 2,
+			WINDOW_HEIGHT / 2
+		);
+		std::cout << message;
+
+	}
 	Console::Lock(false);
 }
 
@@ -106,17 +126,14 @@ void Game::CheckCollision()
 	if (bricks.empty()) {
 		ball.moving = false;
 	}
-	if (bricks.empty()) {
-		std::string message = "You win! Press 'R' to play again.";
-		Console::SetCursorPosition(
-			(WINDOW_WIDTH - static_cast<int>(message.length())) / 2,
-			WINDOW_HEIGHT / 2
-		);
-	}
+	
 	if (paddle.Contains(ball.x_position + ball.x_velocity, ball.y_velocity + ball.y_position))
 	{
 		ball.y_velocity *= -1;
 	}
 
 	// TODO #7 - If ball touches bottom of window, pause ball and display (render) defeat text with R to reset
+	if (ball.y_position >= WINDOW_HEIGHT - 1) {
+		ball.moving = false;
+	}
 }
